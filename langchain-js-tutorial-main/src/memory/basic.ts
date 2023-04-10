@@ -11,13 +11,16 @@ import { ConversationChain } from "langchain/chains";
 
 export const run = async () => {
   const model = new OpenAI({});
+
   //buffer memory remembers previous conversational back and forths directly
   const memory = new BufferMemory();
   const chain = new ConversationChain({ llm: model, memory: memory });
-  const firstResponse = await chain.call({ input: "Hello, I'm John." });
+
+  const firstResponse = await chain.call({
+    input: "Hello, I am Dion and im working as a software engineer.",
+  });
   console.log(firstResponse);
-  // {response: " Hi John! It's nice to meet you. My name is AI. What can I help you with?"}
-  const secondResponse = await chain.call({ input: "What's my name?" });
+
+  const secondResponse = await chain.call({ input: "What's my name and job?" });
   console.log(secondResponse);
-  // {response: ' You said your name is John. Is there anything else you would like to talk about?'}
-};
+ };

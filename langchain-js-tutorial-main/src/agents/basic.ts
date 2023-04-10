@@ -9,6 +9,8 @@ import { SerpAPI, Calculator } from "langchain/tools";
 
 export const run = async () => {
   const model = new OpenAI({ temperature: 0 });
+
+  
   // A tool is a function that performs a specific duty
   // SerpAPI for example accesses google search results in real-time
   const tools = [new SerpAPI(), new Calculator()];

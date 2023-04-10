@@ -7,6 +7,7 @@ import { OpenAIEmbeddings } from "langchain/embeddings";
 export const run = async () => {
   /* Embed query from the user */
   const embeddings = new OpenAIEmbeddings();
+  
   const res = await embeddings.embedQuery("Hello world");
   console.log("query vector", res);
 
