@@ -19,11 +19,12 @@ export default function RootLayout({ children }) {
 
   const signUp = async () => {
     const { data, error } = await supabase.auth.signUp({
-      email: "test@gmail.com",
-      password: "test",
+      email: "11dionang@gmail.com",
+      password: "sup3rs3cur3",
     });
 
     console.log(data);
+    console.log(error);
   };
 
   const signIn = () => {
