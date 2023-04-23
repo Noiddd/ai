@@ -1,15 +1,16 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
+import { createBrowserClient } from "@/utils/supabase-browser";
 
 const Context = createContext(undefined);
 
 export default function SupabaseProvider({ children }) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+  const [supabase] = useState(() => createBrowserClient());
   const router = useRouter();
 
+  // refresh data on user sign in/out
   useEffect(() => {
     const {
       data: { subscription },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useSupabase } from "@/lib/supabase/supabase-provider";
+import { useSupabase } from "@/components/providers/supabase-provider";
 import React from "react";
 
 export default function Login() {
@@ -23,6 +23,7 @@ export default function Login() {
   const signOut = () => {
     supabase.auth.signOut();
   };
+
   return (
     <>
       <button onClick={signUp}>Sign Up</button>

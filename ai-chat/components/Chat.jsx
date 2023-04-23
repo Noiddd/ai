@@ -1,11 +1,9 @@
-import { useSupabase } from "@/lib/supabase/supabase-provider";
 import React from "react";
 
-import { headers, cookies } from "next/headers";
-import { createServerComponentSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createServerClient } from "@/utils/supabase-server";
 
 export default async function Chat() {
-  const supabase = createServerComponentSupabaseClient({ headers, cookies });
+  const supabase = createServerClient();
 
   const { data } = await supabase.from("messages").select();
 

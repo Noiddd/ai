@@ -1,5 +1,5 @@
 import "./globals.css";
-import SupabaseProvider from "../lib/supabase/supabase-provider";
+import SupabaseProvider from "../components/providers/supabase-provider";
 import Login from "@/components/Login";
 import Chat from "@/components/Chat";
 
