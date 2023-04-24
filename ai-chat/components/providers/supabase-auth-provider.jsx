@@ -19,6 +19,20 @@ export default function SupabaseAuthProvider({ serverSession, children }) {
   const { supabase } = useSupabase();
   const router = useRouter();
 
+  // refresh data on user sign in/out, to sync server and client session
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      router.refresh();
+    });
+
+    // this prevents double call on useEffect
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router, supabase]);
+
   // Get USER
   const getUser = async () => {
     const { data: user, error } = await supabase
@@ -40,6 +54,20 @@ export default function SupabaseAuthProvider({ serverSession, children }) {
     isLoading,
     mutate,
   } = useSWR(serverSession ? "profile-context" : null, getUser);
+
+  // Sign Up
+  const signUpWithEmail = async (email, password) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      return error.message;
+    }
+
+    return null;
+  };
 
   // Sign Out
   const signOut = async () => {
@@ -86,8 +114,9 @@ export default function SupabaseAuthProvider({ serverSession, children }) {
     error,
     isLoading,
     mutate,
+    signUpWithEmail,
     signOut,
-    signInWithGithub,
+    signInWithGoogle,
     signInWithEmail,
   };
 
