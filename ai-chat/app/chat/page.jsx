@@ -10,10 +10,12 @@ export default async function Chat() {
   const { data } = await supabase.from("messages").select();
 
   return (
-    <div>
-      {JSON.stringify(data, null, 2)}
-      <div>
-        <button>sign out</button>
+    <div className="relative flex flex-col items-stretch flex-1 w-full h-full ml-0 overflow-hidden md:ml-64 bg-neutral-900 ">
+      <div className="flex-1 overflow-hidden">
+        {JSON.stringify(data, null, 2)}
+        <div>
+          <button>sign out</button>
+        </div>
       </div>
     </div>
   );

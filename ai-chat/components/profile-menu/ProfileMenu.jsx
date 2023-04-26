@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../providers/supabase-auth-provider";
+import Avatar from "./Avatar";
 import ProfileMenuDropDown from "./ProfileMenuDropDown";
 
 export default function ProfileMenu() {
@@ -13,8 +14,8 @@ export default function ProfileMenu() {
       onClick={() => setProfileMenuDropDown((prev) => !prev)}
       className="cursor-pointer"
     >
-      {profileMenuDropDown && <ProfileMenuDropDown />}
-      <div>Avatar</div>
+      <Avatar />
+      {profileMenuDropDown && <ProfileMenuDropDown signOut={signOut} />}
     </div>
   );
 }
