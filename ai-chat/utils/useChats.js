@@ -1,7 +1,6 @@
 const { useAuth } = require("@/components/providers/supabase-auth-provider");
 const { useSupabase } = require("@/components/providers/supabase-provider");
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import useSWR from "swr";
 
 const useChats = () => {
