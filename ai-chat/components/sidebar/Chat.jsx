@@ -9,8 +9,8 @@ export default function Chat({ chat, deleteChatHandler }) {
     <Link href={`/chat/${chat.id}`}>
       <div className="flex items-center w-full px-3 py-2 rounded-md bg-neutral-900 hover:bg-neutral-800 group">
         <div className="flex items-center gap-2 w-11/12">
-          <BsChatLeft className="w-6" />
-          {chat?.messages == undefined ? (
+          <BsChatLeft className="min-w-min" />
+          {chat?.messages?.length > 0 ? (
             <div className="text-sm leading-loose line-clamp-1">
               {chat?.messages?.slice(-1)[0].content}
             </div>

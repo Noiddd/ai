@@ -6,8 +6,6 @@ import Chat from "./Chat";
 
 export default function ChatRow() {
   const { data, isLoading, deleteChatHandler } = useChats();
-
-  console.log(data);
   return (
     <div className="flex flex-col h-full mt-4 overflow-hidden">
       <div>

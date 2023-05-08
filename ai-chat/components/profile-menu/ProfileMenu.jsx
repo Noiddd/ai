@@ -5,7 +5,7 @@ import { useAuth } from "../providers/supabase-auth-provider";
 import Avatar from "./Avatar";
 import ProfileMenuDropDown from "./ProfileMenuDropDown";
 
-export default function ProfileMenu({ avatar }) {
+export default function ProfileMenu() {
   const [profileMenuDropDown, setProfileMenuDropDown] = useState(false);
   const { user, signOut } = useAuth();
 
@@ -14,7 +14,7 @@ export default function ProfileMenu({ avatar }) {
       onClick={() => setProfileMenuDropDown((prev) => !prev)}
       className="cursor-pointer"
     >
-      <Avatar avatar={avatar} />
+      <Avatar avatar={user?.avatar_url} />
       {profileMenuDropDown && <ProfileMenuDropDown signOut={signOut} />}
     </div>
   );
