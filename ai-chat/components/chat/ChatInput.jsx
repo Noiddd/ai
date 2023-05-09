@@ -1,20 +1,30 @@
 "use client";
 
+import useChats from "@/utils/useChats";
 import useMessages from "@/utils/useMessages";
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 
 export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
+  const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = addMessage(chatId, inputValue, "user");
 
-    if (data) {
-      setInputValue("");
+    // if no input, return
+    if (!inputValue) return;
+
+    if (chatId == "") {
+      // start new chat if input in default chat screen
+      const newChatData = await addChatHandler();
+      addMessage(newChatData.id, inputValue, "user");
+    } else {
+      addMessage(chatId, inputValue, "user");
     }
+
+    setInputValue("");
   };
 
   return (

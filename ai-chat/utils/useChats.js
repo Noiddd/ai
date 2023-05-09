@@ -51,7 +51,9 @@ const useChats = () => {
     });
 
     // Redirect to the new chat
-    router.push(`/chat/${newChat.id}?new=true`);
+    router.push(`/chat/${newChat.id}`);
+
+    return newChat;
   };
 
   // Delete Chat Handler
