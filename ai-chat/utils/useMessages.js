@@ -1,10 +1,11 @@
 const { useAuth } = require("@/components/providers/supabase-auth-provider");
 import { useSupabase } from "@/components/providers/supabase-provider";
-import useSWR from "swr";
+import { useRouter } from "next/navigation";
 
 const useMessages = () => {
   const { user } = useAuth();
   const { supabase } = useSupabase();
+  const router = useRouter();
 
   const addMessage = async (chatId, content, role) => {
     const { data, error } = await supabase
@@ -22,6 +23,9 @@ const useMessages = () => {
       console.log(error);
       return;
     }
+
+    // Redirect to the new chat
+    router.push(`/chat/${chatId}`);
 
     return data;
   };

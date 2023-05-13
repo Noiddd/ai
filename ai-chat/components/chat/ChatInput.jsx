@@ -4,11 +4,14 @@ import useChats from "@/utils/useChats";
 import useMessages from "@/utils/useMessages";
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
+import { useAuth } from "../providers/supabase-auth-provider";
 
 export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
   const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
+
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,9 +23,25 @@ export default function ChatInput({ chatId }) {
       // start new chat if input in default chat screen
       const newChatData = await addChatHandler();
       addMessage(newChatData.id, inputValue, "user");
+      chatId = newChatData.id;
     } else {
       addMessage(chatId, inputValue, "user");
     }
+
+    // POST call to OPENAI API
+    await fetch("/api/askQuestions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: inputValue,
+        chatId,
+        user,
+      }),
+    }).then(() => {
+      console.log("success");
+    });
 
     setInputValue("");
   };

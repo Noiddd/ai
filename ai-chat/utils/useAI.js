@@ -1,3 +1,5 @@
+import { openai } from "./openAi";
+
 const useAI = async (prompt) => {
   const res = await openai
     .call({ input: prompt })

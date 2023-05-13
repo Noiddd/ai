@@ -13,5 +13,5 @@ export default async function ChatPage({ params }) {
     .eq("chat", chatId)
     .order("created_at", { ascending: true });
 
-  return <ChatInterface messages={messages} chatId={chatId} />;
+  return <ChatInterface chatId={chatId} messages={messages} />;
 }
