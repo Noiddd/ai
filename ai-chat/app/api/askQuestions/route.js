@@ -1,5 +1,6 @@
 import useAI from "@/utils/useAI";
 import { createServerClient } from "@/utils/supabase-server";
+import { NextResponse } from "next/server";
 
 export async function POST(request, res) {
   const req = await request.json();
@@ -29,19 +30,18 @@ export async function POST(request, res) {
   console.log("AI Response:");
   console.log(response.response);
 
-  //   const { data, error } = await supabase
-  //     .from("messages")
-  //     .insert({
-  //       profile: user?.id,
-  //       chat: chatId,
-  //       content:
-  //         response.response ||
-  //         "Was unable to find an answer to that... Please rephrase",
-  //       role: "ai",
-  //     })
-  //     .select("*")
-  //     .single();
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      profile: user?.id,
+      chat: chatId,
+      content:
+        response.response ||
+        "Was unable to find an answer to that... Please rephrase",
+      role: "ai",
+    })
+    .select("*")
+    .single();
 
-  //   // return reply message
-  //   res.status(200).json({ answer: response.text });
+  return NextResponse.json({ data });
 }

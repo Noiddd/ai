@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { createBrowserClient } from "@/utils/supabase-browser";
 
 const Context = createContext(undefined);

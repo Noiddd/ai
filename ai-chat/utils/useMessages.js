@@ -24,7 +24,7 @@ const useMessages = () => {
       return;
     }
 
-    // Redirect to the new chat
+    // Refresh chat
     router.push(`/chat/${chatId}`);
 
     return data;
