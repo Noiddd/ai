@@ -6,6 +6,14 @@ const model = new OpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
   temperature: 0,
   modelName: "gpt-3.5-turbo",
+  streaming: true,
+  callbacks: [
+    {
+      handleLLMNewToken(token) {
+        process.stdout.write(token);
+      },
+    },
+  ],
 });
 
 const memory = new BufferMemory();
