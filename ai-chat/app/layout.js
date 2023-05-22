@@ -2,6 +2,9 @@ import "./globals.css";
 import SupabaseProvider from "../components/providers/supabase-provider";
 import SupabaseAuthProvider from "@/components/providers/supabase-auth-provider";
 import { createServerClient } from "@/utils/supabase-server";
+// import { Provider } from "react-redux";
+// import store from "../redux/store";
+import { Providers } from "@/components/providers/redux-provider";
 
 export const metadata = {
   title: "Create Next App",
@@ -19,9 +22,11 @@ export default async function RootLayout({ children }) {
     <html lang="en" className="h-full scroll-smooth">
       <body className="h-full bg-neutral-950 text-neutral-50;">
         <SupabaseProvider>
-          <SupabaseAuthProvider serverSession={session}>
-            {children}
-          </SupabaseAuthProvider>
+          <Providers>
+            <SupabaseAuthProvider serverSession={session}>
+              {children}
+            </SupabaseAuthProvider>
+          </Providers>
         </SupabaseProvider>
       </body>
     </html>

@@ -7,11 +7,11 @@ export default async function ChatPage({ params }) {
   const supabase = createServerClient();
 
   // Retrieve messages
-  const { data: messages, error } = await supabase
+  const { data: initialMessages, error } = await supabase
     .from("messages")
     .select("*")
     .eq("chat", chatId)
     .order("created_at", { ascending: true });
 
-  return <ChatInterface chatId={chatId} messages={messages} />;
+  return <ChatInterface chatId={chatId} initialMessages={initialMessages} />;
 }

@@ -6,6 +6,8 @@ import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import { useAuth } from "../providers/supabase-auth-provider";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { addMessageStore } from "@/redux/chatSlice";
 
 export default function ChatInput({ chatId }) {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
   const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
+  const dispatch = useDispatch();
 
   const { user } = useAuth();
 
@@ -23,35 +26,46 @@ export default function ChatInput({ chatId }) {
     if (!inputValue) return;
 
     const prompt = inputValue;
+    setInputValue("");
 
+    // creating user message to push into redux
+    const userMessage = [
+      {
+        profile: user?.id,
+        chat: chatId,
+        content: prompt,
+        role: "user",
+      },
+    ];
+
+    // adding message into redux store
+    dispatch(addMessageStore(userMessage));
+
+    // checking if its a new chat
     if (chatId == "") {
       // start new chat if input in default chat screen
       const newChatData = await addChatHandler();
       addMessage(newChatData.id, prompt, "user");
       chatId = newChatData.id;
-      setInputValue("");
     } else {
       addMessage(chatId, prompt, "user");
-      setInputValue("");
     }
 
     // POST call to OPENAI API
-    await fetch("/api/askQuestions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        chatId,
-        user,
-      }),
-    }).then((res) => {
-      console.log(res);
-      // Refresh chat
-      router.push(`/chat/${chatId}`);
-      console.log("success");
-    });
+    // await fetch("/api/askQuestions", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     prompt: prompt,
+    //     chatId,
+    //     user,
+    //   }),
+    // }).then((res) => {
+    //   // Refresh chat
+    //   router.push(`/chat/${chatId}`);
+    // });
   };
 
   return (
