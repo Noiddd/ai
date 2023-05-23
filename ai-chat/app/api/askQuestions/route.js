@@ -1,7 +1,6 @@
 import useAI from "@/utils/useAI";
 import { createServerClient } from "@/utils/supabase-server";
 import { NextResponse } from "next/server";
-import { useDispatch } from "react-redux";
 
 export async function POST(request) {
   const { prompt, chatId, user } = await request.json();
@@ -26,13 +25,6 @@ export async function POST(request) {
 
   // Get AI response
   const response = await useAI(prompt);
-
-  const responseMessage = {
-    content: response,
-    role: "ai",
-  };
-
-  dispatch(addMessage(responseMessage));
 
   // const dataTest = response.body;
   // const reader = dataTest.getReader();

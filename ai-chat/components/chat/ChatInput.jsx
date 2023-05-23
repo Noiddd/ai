@@ -52,20 +52,38 @@ export default function ChatInput({ chatId }) {
     }
 
     // POST call to OPENAI API
-    // await fetch("/api/askQuestions", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     prompt: prompt,
-    //     chatId,
-    //     user,
-    //   }),
-    // }).then((res) => {
-    //   // Refresh chat
-    //   router.push(`/chat/${chatId}`);
-    // });
+    await fetch("/api/askQuestions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        chatId,
+        user,
+      }),
+    })
+      .then((res) => {
+        // Refresh chat
+        // router.push(`/chat/${chatId}`);
+
+        return res.json();
+      })
+      .then((res) => {
+        console.log("final");
+        console.log(res.data.content);
+
+        const aiMessage = [
+          {
+            profile: user?.id,
+            chat: chatId,
+            content: res.data.content,
+            role: "ai",
+          },
+        ];
+
+        dispatch(addMessageStore(aiMessage));
+      });
   };
 
   return (

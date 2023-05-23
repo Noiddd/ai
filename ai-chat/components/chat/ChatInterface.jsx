@@ -17,7 +17,7 @@ export default function ChatInterface({ chatId, initialMessages }) {
 
     dispatch(clearMessageStore());
     dispatch(addMessageStore(initialMessages));
-  }, []);
+  }, [chatId, initialMessages]);
 
   return (
     <main className="relative flex flex-col items-stretch flex-1 w-full h-full ml-0 overflow-hidden transition-all transition-width md:ml-64 bg-neutral-900">
