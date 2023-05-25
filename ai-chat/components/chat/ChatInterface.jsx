@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import ChatInput from "./ChatInput";
 import StartNewChat from "./StartNewChat";
 import Messages from "./Messages";
@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { addMessageStore, clearMessageStore } from "@/redux/chatSlice";
 
 export default function ChatInterface({ chatId, initialMessages }) {
+  const chatRef = useRef();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -17,7 +19,11 @@ export default function ChatInterface({ chatId, initialMessages }) {
 
     dispatch(clearMessageStore());
     dispatch(addMessageStore(initialMessages));
-  }, [chatId, initialMessages]);
+  }, [chatId]);
+
+  // useEffect(() => {
+  //   chatRef.current?.scrollIntoView();
+  // }, []);
 
   return (
     <main className="relative flex flex-col items-stretch flex-1 w-full h-full ml-0 overflow-hidden transition-all transition-width md:ml-64 bg-neutral-900">
@@ -25,10 +31,10 @@ export default function ChatInterface({ chatId, initialMessages }) {
         {initialMessages?.length == 0 ? (
           <StartNewChat />
         ) : (
-          <Messages initialMessages={initialMessages} />
+          <Messages chatRef={chatRef} />
         )}
 
-        <ChatInput chatId={chatId} />
+        <ChatInput chatId={chatId} chatRef={chatRef} />
       </div>
     </main>
   );

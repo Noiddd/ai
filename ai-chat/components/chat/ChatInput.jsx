@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { addMessageStore } from "@/redux/chatSlice";
 
-export default function ChatInput({ chatId }) {
+export default function ChatInput({ chatId, chatRef }) {
   const router = useRouter();
 
   const [inputValue, setInputValue] = useState("");
@@ -66,7 +66,6 @@ export default function ChatInput({ chatId }) {
       .then((res) => {
         // Refresh chat
         // router.push(`/chat/${chatId}`);
-
         return res.json();
       })
       .then((res) => {

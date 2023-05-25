@@ -1,11 +1,14 @@
 "use client";
 
 import { createSlice } from "@reduxjs/toolkit";
+import { createRef } from "react";
+import React from "react";
 
 export const MessagesSlice = createSlice({
   name: "messages",
   initialState: {
     messages: [],
+    chatRef: createRef(),
   },
   reducers: {
     addMessageStore: (state, action) => {
