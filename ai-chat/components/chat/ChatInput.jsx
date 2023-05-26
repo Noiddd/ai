@@ -5,13 +5,10 @@ import useMessages from "@/utils/useMessages";
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import { useAuth } from "../providers/supabase-auth-provider";
-import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { addMessageStore } from "@/redux/chatSlice";
+import { addMessageStore, updateEmptyAIMessage } from "@/redux/chatSlice";
 
 export default function ChatInput({ chatId, chatRef }) {
-  const router = useRouter();
-
   const [inputValue, setInputValue] = useState("");
   const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
@@ -51,6 +48,18 @@ export default function ChatInput({ chatId, chatRef }) {
       addMessage(chatId, prompt, "user");
     }
 
+    // adding empty ai response to redux store
+    const emptyAiMessage = [
+      {
+        profile: user?.id,
+        chat: chatId,
+        content: "",
+        role: "ai",
+      },
+    ];
+
+    dispatch(addMessageStore(emptyAiMessage));
+
     // POST call to OPENAI API
     await fetch("/api/askQuestions", {
       method: "POST",
@@ -64,8 +73,6 @@ export default function ChatInput({ chatId, chatRef }) {
       }),
     })
       .then((res) => {
-        // Refresh chat
-        // router.push(`/chat/${chatId}`);
         return res.json();
       })
       .then((res) => {
@@ -81,7 +88,7 @@ export default function ChatInput({ chatId, chatRef }) {
           },
         ];
 
-        dispatch(addMessageStore(aiMessage));
+        dispatch(updateEmptyAIMessage(aiMessage));
       });
   };
 

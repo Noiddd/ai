@@ -1,14 +1,11 @@
 "use client";
 
 import { createSlice } from "@reduxjs/toolkit";
-import { createRef } from "react";
-import React from "react";
 
 export const MessagesSlice = createSlice({
   name: "messages",
   initialState: {
     messages: [],
-    chatRef: createRef(),
   },
   reducers: {
     addMessageStore: (state, action) => {
@@ -22,6 +19,15 @@ export const MessagesSlice = createSlice({
       return {
         ...state,
         messages: [],
+      };
+    },
+
+    updateEmptyAIMessage: (state, action) => {
+      const stateWithoutEmptyMessage = state.messages.slice(0, -1);
+
+      return {
+        ...state,
+        messages: [...stateWithoutEmptyMessage, ...action.payload],
       };
     },
     // deleteChat: (state, action) => {
@@ -39,6 +45,7 @@ export const MessagesSlice = createSlice({
   },
 });
 
-export const { addMessageStore, clearMessageStore } = MessagesSlice.actions;
+export const { addMessageStore, clearMessageStore, updateEmptyAIMessage } =
+  MessagesSlice.actions;
 
 export default MessagesSlice.reducer;
