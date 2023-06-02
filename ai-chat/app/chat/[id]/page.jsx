@@ -3,6 +3,7 @@ import { createServerClient } from "@/utils/supabase-server";
 import React from "react";
 
 export default async function ChatPage({ params }) {
+  console.log(params);
   const chatId = params.id;
   const supabase = createServerClient();
 

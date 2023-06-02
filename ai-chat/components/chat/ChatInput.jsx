@@ -6,13 +6,22 @@ import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import { useAuth } from "../providers/supabase-auth-provider";
 import { useDispatch } from "react-redux";
-import { addMessageStore, updateEmptyAIMessage } from "@/redux/chatSlice";
+import {
+  addMessageStore,
+  chatIsNew,
+  chatIsNotNew,
+  clearMessageStore,
+  updateEmptyAIMessage,
+} from "@/redux/chatSlice";
+import { useRouter } from "next/navigation";
 
 export default function ChatInput({ chatId, chatRef }) {
   const [inputValue, setInputValue] = useState("");
   const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
   const dispatch = useDispatch();
+
+  const router = useRouter();
 
   const { user } = useAuth();
 
@@ -25,40 +34,56 @@ export default function ChatInput({ chatId, chatRef }) {
     const prompt = inputValue;
     setInputValue("");
 
-    // creating user message to push into redux
-    const userMessage = [
-      {
-        profile: user?.id,
-        chat: chatId,
-        content: prompt,
-        role: "user",
-      },
-    ];
-
-    // adding message into redux store
-    dispatch(addMessageStore(userMessage));
-
     // checking if its a new chat
     if (chatId == "") {
+      console.log("chat has no id");
+      // Clear redux store
+      dispatch(clearMessageStore());
+
+      // change redux state to indicate new chat
+      dispatch(chatIsNew());
+
       // start new chat if input in default chat screen
       const newChatData = await addChatHandler();
-      addMessage(newChatData.id, prompt, "user");
+
+      // Add first user input into supabase
+      addMessage(newChatData?.id, prompt, "user");
       chatId = newChatData.id;
     } else {
+      console.log("Chat input chat got id");
+      // dispatch(chatIsNotNew());
+
+      // Redirect to the new chat
+      router.push(`/chat/${chatId}`);
+
+      // creating user message to push into redux
+      const firstUserMessage = [
+        {
+          profile: user?.id,
+          chat: chatId,
+          content: prompt,
+          role: "user",
+        },
+      ];
+
+      // adding user message into redux store
+      dispatch(addMessageStore(firstUserMessage));
+
+      // Adding user input into supabase
       addMessage(chatId, prompt, "user");
+
+      // Creating empty ai message for UX loading state
+      const emptyAiMessage = [
+        {
+          profile: user?.id,
+          chat: chatId,
+          content: "",
+          role: "ai",
+        },
+      ];
+
+      dispatch(addMessageStore(emptyAiMessage));
     }
-
-    // adding empty ai response to redux store
-    const emptyAiMessage = [
-      {
-        profile: user?.id,
-        chat: chatId,
-        content: "",
-        role: "ai",
-      },
-    ];
-
-    dispatch(addMessageStore(emptyAiMessage));
 
     // POST call to OPENAI API
     await fetch("/api/askQuestions", {
@@ -76,9 +101,6 @@ export default function ChatInput({ chatId, chatRef }) {
         return res.json();
       })
       .then((res) => {
-        console.log("final");
-        console.log(res.data.content);
-
         const aiMessage = [
           {
             profile: user?.id,

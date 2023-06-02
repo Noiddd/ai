@@ -8,6 +8,7 @@ const useMessages = () => {
   const router = useRouter();
 
   const addMessage = async (chatId, content, role) => {
+    console.log("CHAT INPUT ADDING INTO supabase");
     const { data, error } = await supabase
       .from("messages")
       .insert({
@@ -25,7 +26,7 @@ const useMessages = () => {
     }
 
     // Refresh chat
-    router.push(`/chat/${chatId}`);
+    //router.push(`/chat/${chatId}`);
 
     return data;
   };

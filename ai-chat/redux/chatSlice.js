@@ -6,6 +6,7 @@ export const MessagesSlice = createSlice({
   name: "messages",
   initialState: {
     messages: [],
+    isChatNew: false,
   },
   reducers: {
     addMessageStore: (state, action) => {
@@ -30,6 +31,15 @@ export const MessagesSlice = createSlice({
         messages: [...stateWithoutEmptyMessage, ...action.payload],
       };
     },
+
+    chatIsNew: (state) => {
+      return { ...state, isChatNew: true };
+    },
+
+    chatIsNotNew: (state) => {
+      return { ...state, isChatNew: false };
+    },
+
     // deleteChat: (state, action) => {
     //   const chatId = action.payload.id;
 
@@ -45,7 +55,12 @@ export const MessagesSlice = createSlice({
   },
 });
 
-export const { addMessageStore, clearMessageStore, updateEmptyAIMessage } =
-  MessagesSlice.actions;
+export const {
+  addMessageStore,
+  clearMessageStore,
+  updateEmptyAIMessage,
+  chatIsNew,
+  chatIsNotNew,
+} = MessagesSlice.actions;
 
 export default MessagesSlice.reducer;
