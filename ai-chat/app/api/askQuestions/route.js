@@ -2,6 +2,8 @@ import useAI from "@/utils/useAI";
 import { createServerClient } from "@/utils/supabase-server";
 import { NextResponse } from "next/server";
 
+import streamResponse from "@/utils/test";
+
 export async function POST(request) {
   const { prompt, chatId, user } = await request.json();
 
@@ -23,14 +25,12 @@ export async function POST(request) {
     return;
   }
 
+  const stream = streamResponse(prompt);
+
+  return new Response(await stream);
+
   // Get AI response
   const response = await useAI(prompt);
-
-  // const dataTest = response.body;
-  // const reader = dataTest.getReader();
-  // const decoder = new TextDecoder();
-  // const
-  // let done = false;
 
   const { data, error } = await supabase
     .from("messages")

@@ -1,61 +1,74 @@
-const { useAuth } = require("@/components/providers/supabase-auth-provider");
-const { useSupabase } = require("@/components/providers/supabase-provider");
-import { useRouter } from "next/navigation";
-import useSWR from "swr";
+import { BufferMemory } from "langchain/memory";
+import { ConversationChain } from "langchain/chains";
 
-const useTest = (chatId) => {
-  const { user } = useAuth();
-  const { supabase } = useSupabase();
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+  MessagesPlaceholder,
+  SystemMessagePromptTemplate,
+} from "langchain/prompts";
 
-  const getMessages = async () => {
-    const { data, error } = await supabase
-      .from("messages")
-      .select("*")
-      .eq("chat", chatId)
-      .order("created_at", { ascending: true });
+const streamResponse = async (prompt) => {
+  // creating a streamable object
+  const stream = new TransformStream();
 
-    if (error) throw error;
+  // passing values to the stream
+  const writer = stream.writable.getWriter();
 
-    return data;
-  };
+  const encoder = new TextEncoder();
 
-  const { data, error, isLoading, mutate } = useSWR(
-    user ? ["messages", user.id] : null,
-    getMessages
-  );
+  const model = new ChatOpenAI({
+    openAIApiKey: process.env.OPENAI_API_KEY,
+    temperature: 0.9,
+    modelName: "gpt-3.5-turbo",
+    streaming: true,
+    callbacks: [
+      {
+        async handleLLMNewToken(token) {
+          // checking if writer is available
+          await writer.ready;
 
-  const router = useRouter();
+          // converting token into a format the stream understands
+          await writer.write(encoder.encode(`${token}`));
 
-  const addMessage = async (chatId, content, role) => {
-    const { data, error } = await supabase
-      .from("messages")
-      .insert({
-        profile: user?.id,
-        chat: chatId,
-        content,
-        role,
-      })
-      .select("*")
-      .single();
+          //process.stdout.write(token);
+        },
+        async handleLLMEnd() {
+          await writer.ready;
+          await writer.close();
+        },
+      },
+    ],
+  });
 
-    if (error && !data) {
-      console.log(error);
-      return;
-    }
+  const memory = new BufferMemory({
+    returnMessages: true,
+    memoryKey: "history",
+  });
 
-    // Add it to the top of the list
-    mutate((prev) => {
-      if (prev && prev.length > 0) {
-        return [data, ...prev];
-      } else {
-        return [data];
-      }
-    });
+  const chatPrompt = ChatPromptTemplate.fromPromptMessages([
+    SystemMessagePromptTemplate.fromTemplate(
+      `Answer as concisely as possible and ALWAYS answer in MARKDOWN. Answer based on previous conversations if provided and if it's relevant. Current date: ${new Date()}`
+    ),
+    new MessagesPlaceholder("history"),
+    HumanMessagePromptTemplate.fromTemplate("{input}"),
+  ]);
 
-    return data;
-  };
+  const openai = new ConversationChain({
+    llm: model,
+    memory: memory,
+    prompt: chatPrompt,
+  });
 
-  return { data, error, isLoading, mutate, addMessage };
+  openai
+    .call({ input: prompt })
+    .catch(
+      (err) =>
+        `Chat was unable to find an answer for that! (Error: ${err.message})`
+    );
+
+  return stream.readable;
 };
 
-export default useTest;
+export default streamResponse;

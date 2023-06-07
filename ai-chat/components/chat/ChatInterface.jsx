@@ -23,7 +23,7 @@ export default function ChatInterface({ chatId, initialMessages }) {
           <Messages chatRef={chatRef} />
         )}
 
-        <ChatInput chatId={chatId} chatRef={chatRef} />
+        <ChatInput chatId={chatId} />
       </div>
     </main>
   );

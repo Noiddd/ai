@@ -9,13 +9,15 @@ import { useDispatch } from "react-redux";
 import {
   addMessageStore,
   chatIsNew,
-  chatIsNotNew,
   clearMessageStore,
   updateEmptyAIMessage,
 } from "@/redux/chatSlice";
 import { useRouter } from "next/navigation";
 
-export default function ChatInput({ chatId, chatRef }) {
+import { aiResponse } from "@/jotai/response";
+import { useAtom } from "jotai";
+
+export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
   const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
@@ -24,6 +26,8 @@ export default function ChatInput({ chatId, chatRef }) {
   const router = useRouter();
 
   const { user } = useAuth();
+
+  const [response, setResponse] = useAtom(aiResponse);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,7 +55,6 @@ export default function ChatInput({ chatId, chatRef }) {
       chatId = newChatData.id;
     } else {
       console.log("Chat input chat got id");
-      // dispatch(chatIsNotNew());
 
       // Redirect to the new chat
       router.push(`/chat/${chatId}`);
@@ -98,19 +101,35 @@ export default function ChatInput({ chatId, chatRef }) {
       }),
     })
       .then((res) => {
-        return res.json();
-      })
-      .then((res) => {
-        const aiMessage = [
-          {
-            profile: user?.id,
-            chat: chatId,
-            content: res.data.content,
-            role: "ai",
-          },
-        ];
+        return res.body.getReader();
 
-        dispatch(updateEmptyAIMessage(aiMessage));
+        //return res.json();
+      })
+      .then(async (res) => {
+        while (true) {
+          const { done, value } = await res.read();
+
+          if (done) {
+            console.log("response done");
+            console.log(response);
+            const aiMessage = [
+              {
+                profile: user?.id,
+                chat: chatId,
+                content: response,
+                role: "ai",
+              },
+            ];
+
+            dispatch(updateEmptyAIMessage(aiMessage));
+            //setResponse("");
+
+            break;
+          }
+
+          const text = new TextDecoder().decode(value);
+          setResponse((prev) => prev + text);
+        }
       });
   };
 

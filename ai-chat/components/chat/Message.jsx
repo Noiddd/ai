@@ -7,9 +7,11 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 
-export default function Message({ message }) {
+export default function Message({ message, response }) {
   const [isAI, setIsAI] = useState(false);
   const { user } = useAuth();
+
+  console.log(message?.content);
 
   useEffect(() => {
     if (message?.role === "ai") {
@@ -41,13 +43,24 @@ export default function Message({ message }) {
               <ChatAvatar avatar={user?.avatar_url} />
             )}
           </div>
-          <ReactMarkdown
-            className="break-words markdown w-4/5"
-            rehypePlugins={[rehypeHighlight]}
-            remarkPlugins={[remarkGfm]}
-          >
-            {message.content}
-          </ReactMarkdown>
+
+          {message == undefined ? (
+            <ReactMarkdown
+              className="break-words markdown w-4/5"
+              rehypePlugins={[rehypeHighlight]}
+              remarkPlugins={[remarkGfm]}
+            >
+              {response}
+            </ReactMarkdown>
+          ) : (
+            <ReactMarkdown
+              className="break-words markdown w-4/5"
+              rehypePlugins={[rehypeHighlight]}
+              remarkPlugins={[remarkGfm]}
+            >
+              {message?.content}
+            </ReactMarkdown>
+          )}
         </div>
       )}
     </div>
