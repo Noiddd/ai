@@ -11,8 +11,6 @@ export default function Message({ message, response }) {
   const [isAI, setIsAI] = useState(false);
   const { user } = useAuth();
 
-  console.log(message?.content);
-
   useEffect(() => {
     if (message?.role === "ai") {
       setIsAI(true);
@@ -28,10 +26,13 @@ export default function Message({ message, response }) {
       }
     >
       {message?.role === "ai" && message.content == "" ? (
-        <div className="flex w-full max-w-3xl gap-4 px-4 py-10 mx-auto sm:px-8 align-top justify-center">
+        <div className="flex w-full max-w-3xl gap-4 px-4 py-10 mx-auto sm:px-8 align-top">
+          <div className="w-10 h-10">
+            <ChatAvatar avatar={"https://ui-avatars.com/api/?name=AI"} />
+          </div>
           <div className="flex items-center gap-2 px-3 py-1 text-lg rounded-md max-w-fit bg-neutral-950/50">
             <div className="w-2 h-2 bg-indigo-900 rounded-full animate-pulse" />
-            <span>Typing...</span>
+            <span>Thinking...</span>
           </div>
         </div>
       ) : (

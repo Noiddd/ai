@@ -5,29 +5,36 @@ import useMessages from "@/utils/useMessages";
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
 import { useAuth } from "../providers/supabase-auth-provider";
-import { useDispatch } from "react-redux";
-import {
-  addMessageStore,
-  chatIsNew,
-  clearMessageStore,
-  updateEmptyAIMessage,
-} from "@/redux/chatSlice";
 import { useRouter } from "next/navigation";
 
-import { aiResponse } from "@/jotai/response";
-import { useAtom } from "jotai";
+import {
+  addAIResponse,
+  addMessageJotai,
+  aiResponse,
+  chatMessages,
+  clearChatMessages,
+  clearResponse,
+  isChatNew,
+  updateResponse,
+} from "@/jotai/chat";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 
 export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
   const { addChatHandler } = useChats();
   const { addMessage } = useMessages();
-  const dispatch = useDispatch();
 
   const router = useRouter();
 
   const { user } = useAuth();
 
-  const [response, setResponse] = useAtom(aiResponse);
+  const responseAtom = useAtomValue(aiResponse);
+  const setNewChat = useSetAtom(isChatNew);
+  const clearChatAtom = useSetAtom(clearChatMessages);
+  const addMessageAtom = useSetAtom(addMessageJotai);
+  const addAIResponseAtom = useSetAtom(addAIResponse);
+  const updateResponseAtom = useSetAtom(updateResponse);
+  const clearResponseAtom = useSetAtom(clearResponse);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,13 +48,13 @@ export default function ChatInput({ chatId }) {
     // checking if its a new chat
     if (chatId == "") {
       console.log("chat has no id");
-      // Clear redux store
-      dispatch(clearMessageStore());
 
-      // change redux state to indicate new chat
-      dispatch(chatIsNew());
+      clearChatAtom();
 
-      // start new chat if input in default chat screen
+      // Change jotai isChatNew atom to true
+      setNewChat(true);
+
+      // start new chat since input in default chat screen
       const newChatData = await addChatHandler();
 
       // Add first user input into supabase
@@ -69,8 +76,8 @@ export default function ChatInput({ chatId }) {
         },
       ];
 
-      // adding user message into redux store
-      dispatch(addMessageStore(firstUserMessage));
+      //setMessages([...messages, ...firstUserMessage]);
+      addMessageAtom(firstUserMessage);
 
       // Adding user input into supabase
       addMessage(chatId, prompt, "user");
@@ -85,7 +92,7 @@ export default function ChatInput({ chatId }) {
         },
       ];
 
-      dispatch(addMessageStore(emptyAiMessage));
+      //setMessages([...messages, ...emptyAiMessage]);
     }
 
     // POST call to OPENAI API
@@ -110,25 +117,34 @@ export default function ChatInput({ chatId }) {
           const { done, value } = await res.read();
 
           if (done) {
-            console.log("response done");
-            console.log(response);
-            const aiMessage = [
-              {
-                profile: user?.id,
-                chat: chatId,
-                content: response,
-                role: "ai",
-              },
-            ];
+            // const aiMessage = [
+            //   {
+            //     profile: user?.id,
+            //     chat: chatId,
+            //     content: response,
+            //     role: "ai",
+            //   },
+            // ];
 
-            dispatch(updateEmptyAIMessage(aiMessage));
+            console.log("this is the last response");
+            console.log(responseAtom);
+
+            // adding response into supabase
+            addMessage(chatId, responseAtom, "ai");
+
+            addAIResponseAtom(user, chatId);
+
+            //addMessageAtom(aiMessage);
+
             //setResponse("");
+            clearResponseAtom();
 
             break;
           }
 
           const text = new TextDecoder().decode(value);
-          setResponse((prev) => prev + text);
+          updateResponseAtom(text);
+          //setResponse((prev) => prev + text);
         }
       });
   };

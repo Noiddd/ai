@@ -1,23 +1,29 @@
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addMessageStore,
-  chatIsNotNew,
-  clearMessageStore,
-} from "@/redux/chatSlice";
 import { useEffect } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  addMessageJotai,
+  chatMessages,
+  clearChatMessages,
+  isChatNew,
+} from "@/jotai/chat";
 
 const useChat = ({ chatId, initialMessages, user }) => {
-  const dispatch = useDispatch();
+  // const isChatNew = useSelector((state) => state.messages.isChatNew);
 
-  const isChatNew = useSelector((state) => state.messages.isChatNew);
+  const [messages, setMessages] = useAtom(chatMessages);
+  const [newChat, setNewChat] = useAtom(isChatNew);
+  const clearChatAtom = useSetAtom(clearChatMessages);
+  const addMessageAtom = useSetAtom(addMessageJotai);
 
   useEffect(() => {
-    dispatch(clearMessageStore());
+    //setMessages([]);
+    clearChatAtom();
 
     console.log("FIRST");
-    if (isChatNew) {
+    if (newChat) {
       console.log("CHAT IS NEW");
-      dispatch(addMessageStore(initialMessages));
+
+      setMessages([...initialMessages]);
 
       const emptyAiMessage = [
         {
@@ -28,12 +34,13 @@ const useChat = ({ chatId, initialMessages, user }) => {
         },
       ];
 
-      dispatch(addMessageStore(emptyAiMessage));
+      addMessageAtom(emptyAiMessage);
 
-      dispatch(chatIsNotNew());
+      setNewChat(false);
     } else {
       console.log("Chat is NOT NEW");
-      dispatch(addMessageStore(initialMessages));
+
+      setMessages([...initialMessages]);
     }
   }, [chatId]);
 };

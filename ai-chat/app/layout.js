@@ -21,11 +21,9 @@ export default async function RootLayout({ children }) {
     <html lang="en" className="h-full scroll-smooth">
       <body className="h-full bg-neutral-950 text-neutral-50;">
         <SupabaseProvider>
-          <ReduxProvider>
-            <SupabaseAuthProvider serverSession={session}>
-              {children}
-            </SupabaseAuthProvider>
-          </ReduxProvider>
+          <SupabaseAuthProvider serverSession={session}>
+            {children}
+          </SupabaseAuthProvider>
         </SupabaseProvider>
       </body>
     </html>

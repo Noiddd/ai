@@ -1,17 +1,16 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { aiResponse } from "@/jotai/response";
+import { aiResponse, chatMessages } from "@/jotai/chat";
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import Message from "./Message";
 
 export default function Messages({ chatRef }) {
-  const messages = useSelector((state) => state.messages);
+  //const response = useAtomValue(aiResponse);
 
-  const response = useAtomValue(aiResponse);
-
-  console.log(response);
+  const messages = useAtomValue(chatMessages);
+  console.log("test");
+  console.log(messages);
 
   useEffect(() => {
     chatRef.current?.scrollIntoView({
@@ -19,14 +18,14 @@ export default function Messages({ chatRef }) {
       block: "end",
       inline: "nearest",
     });
-  }, [messages.messages]);
+  }, [messages]);
 
   return (
     <div className="h-full overflow-y-scroll">
-      {messages.messages?.map((message, index) => (
+      {messages?.map((message, index) => (
         <Message message={message} key={index} />
       ))}
-      {response != "" && <Message response={response} />}
+      {/* {response != "" && <Message response={response} />} */}
       <div className="mt-28" ref={chatRef} />
     </div>
   );

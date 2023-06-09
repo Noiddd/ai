@@ -1,15 +1,11 @@
 const { useAuth } = require("@/components/providers/supabase-auth-provider");
 const { useSupabase } = require("@/components/providers/supabase-provider");
-import { chatIsNew } from "@/redux/chatSlice";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
 import useSWR from "swr";
 
 const useChats = () => {
   const { user } = useAuth();
   const { supabase } = useSupabase();
-
-  const dispatch = useDispatch();
 
   const getChats = async () => {
     const { data, error } = await supabase
