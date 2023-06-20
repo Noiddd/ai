@@ -49,24 +49,19 @@ const streamResponse = async (prompt) => {
 
   const chatPrompt = ChatPromptTemplate.fromPromptMessages([
     SystemMessagePromptTemplate.fromTemplate(
-      `Answer as concisely as possible and ALWAYS answer in MARKDOWN. Answer based on previous conversations if provided and if it's relevant. Current date: ${new Date()}`
+      `Answer as concisely as possible and ALWAYS answer in MARKDOWN. Current date: ${new Date()}`
     ),
     new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate("{input}"),
   ]);
 
   const openai = new ConversationChain({
-    llm: model,
     memory: memory,
     prompt: chatPrompt,
+    llm: model,
   });
 
-  openai
-    .call({ input: prompt })
-    .catch(
-      (err) =>
-        `Chat was unable to find an answer for that! (Error: ${err.message})`
-    );
+  openai.call({ input: prompt });
 
   return stream.readable;
 };

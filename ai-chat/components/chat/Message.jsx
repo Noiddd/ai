@@ -25,34 +25,17 @@ export default function Message({ message, response }) {
           : "bg-neutral-900 last:pb-28 last:sm:pb-28 text-white p-10"
       }
     >
-      {message?.role === "ai" && message.content == "" ? (
+      {message?.role === "ai" ? (
         <div className="flex w-full max-w-3xl gap-4 px-4 py-10 mx-auto sm:px-8 align-top">
           <div className="w-10 h-10">
             <ChatAvatar avatar={"https://ui-avatars.com/api/?name=AI"} />
           </div>
-          <div className="flex items-center gap-2 px-3 py-1 text-lg rounded-md max-w-fit bg-neutral-950/50">
-            <div className="w-2 h-2 bg-indigo-900 rounded-full animate-pulse" />
-            <span>Thinking...</span>
-          </div>
-        </div>
-      ) : (
-        <div className="flex w-full max-w-3xl gap-4 px-4 py-10 mx-auto sm:px-8 align-top">
-          <div className="w-10 h-10">
-            {message?.role === "ai" ? (
-              <ChatAvatar avatar={"https://ui-avatars.com/api/?name=AI"} />
-            ) : (
-              <ChatAvatar avatar={user?.avatar_url} />
-            )}
-          </div>
 
-          {message == undefined ? (
-            <ReactMarkdown
-              className="break-words markdown w-4/5"
-              rehypePlugins={[rehypeHighlight]}
-              remarkPlugins={[remarkGfm]}
-            >
-              {response}
-            </ReactMarkdown>
+          {message.content == "" ? (
+            <div className="flex items-center gap-2 px-3 py-1 text-base rounded-md max-w-fit bg-neutral-950/50">
+              <div className="w-2 h-2 bg-indigo-900 rounded-full animate-pulse" />
+              <span>Thinking...</span>
+            </div>
           ) : (
             <ReactMarkdown
               className="break-words markdown w-4/5"
@@ -62,6 +45,19 @@ export default function Message({ message, response }) {
               {message?.content}
             </ReactMarkdown>
           )}
+        </div>
+      ) : (
+        <div className="flex w-full max-w-3xl gap-4 px-4 py-10 mx-auto sm:px-8 align-top">
+          <div className="w-10 h-10">
+            <ChatAvatar avatar={user?.avatar_url} />
+          </div>
+          <ReactMarkdown
+            className="break-words markdown w-4/5"
+            rehypePlugins={[rehypeHighlight]}
+            remarkPlugins={[remarkGfm]}
+          >
+            {message?.content}
+          </ReactMarkdown>
         </div>
       )}
     </div>

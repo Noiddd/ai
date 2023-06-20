@@ -8,16 +8,13 @@ import { useAuth } from "../providers/supabase-auth-provider";
 import { useRouter } from "next/navigation";
 
 import {
-  addAIResponse,
   addMessageJotai,
-  aiResponse,
-  chatMessages,
+  addSupabaseResponse,
   clearChatMessages,
   clearResponse,
   isChatNew,
-  updateResponse,
 } from "@/jotai/chat";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
@@ -28,13 +25,11 @@ export default function ChatInput({ chatId }) {
 
   const { user } = useAuth();
 
-  const responseAtom = useAtomValue(aiResponse);
   const setNewChat = useSetAtom(isChatNew);
   const clearChatAtom = useSetAtom(clearChatMessages);
   const addMessageAtom = useSetAtom(addMessageJotai);
-  const addAIResponseAtom = useSetAtom(addAIResponse);
-  const updateResponseAtom = useSetAtom(updateResponse);
   const clearResponseAtom = useSetAtom(clearResponse);
+  const responseToSupabase = useSetAtom(addSupabaseResponse);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,25 +43,47 @@ export default function ChatInput({ chatId }) {
     // checking if its a new chat
     if (chatId == "") {
       console.log("chat has no id");
-
+      console.log("chatInput, clearing chatMessages");
       clearChatAtom();
 
-      // Change jotai isChatNew atom to true
+      console.log("chatInput, newChat to true");
       setNewChat(true);
 
       // start new chat since input in default chat screen
       const newChatData = await addChatHandler();
 
-      // Add first user input into supabase
+      // creating user message to push into redux
+      const firstUserMessage = [
+        {
+          profile: user?.id,
+          chat: newChatData?.id,
+          content: prompt,
+          role: "user",
+        },
+        {
+          profile: user?.id,
+          chat: newChatData?.id,
+          content: "",
+          role: "ai",
+        },
+      ];
+
+      console.log("chatinput, add input into jotai");
+      addMessageAtom(firstUserMessage);
+
+      console.log("chatInput, add userinput into supabase");
       addMessage(newChatData?.id, prompt, "user");
       chatId = newChatData.id;
+
+      // clearing chatMessage atom
+      clearResponseAtom();
     } else {
       console.log("Chat input chat got id");
 
       // Redirect to the new chat
       router.push(`/chat/${chatId}`);
 
-      // creating user message to push into redux
+      //creating user message to push into redux
       const firstUserMessage = [
         {
           profile: user?.id,
@@ -74,16 +91,6 @@ export default function ChatInput({ chatId }) {
           content: prompt,
           role: "user",
         },
-      ];
-
-      //setMessages([...messages, ...firstUserMessage]);
-      addMessageAtom(firstUserMessage);
-
-      // Adding user input into supabase
-      addMessage(chatId, prompt, "user");
-
-      // Creating empty ai message for UX loading state
-      const emptyAiMessage = [
         {
           profile: user?.id,
           chat: chatId,
@@ -92,61 +99,15 @@ export default function ChatInput({ chatId }) {
         },
       ];
 
-      //setMessages([...messages, ...emptyAiMessage]);
+      console.log("chatInput, chat got id, adding user input into jotai");
+      addMessageAtom(firstUserMessage);
+
+      //Adding user input into supabase
+      addMessage(chatId, prompt, "user");
+      clearResponseAtom();
     }
 
-    // POST call to OPENAI API
-    await fetch("/api/askQuestions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt: prompt,
-        chatId,
-        user,
-      }),
-    })
-      .then((res) => {
-        return res.body.getReader();
-
-        //return res.json();
-      })
-      .then(async (res) => {
-        while (true) {
-          const { done, value } = await res.read();
-
-          if (done) {
-            // const aiMessage = [
-            //   {
-            //     profile: user?.id,
-            //     chat: chatId,
-            //     content: response,
-            //     role: "ai",
-            //   },
-            // ];
-
-            console.log("this is the last response");
-            console.log(responseAtom);
-
-            // adding response into supabase
-            addMessage(chatId, responseAtom, "ai");
-
-            addAIResponseAtom(user, chatId);
-
-            //addMessageAtom(aiMessage);
-
-            //setResponse("");
-            clearResponseAtom();
-
-            break;
-          }
-
-          const text = new TextDecoder().decode(value);
-          updateResponseAtom(text);
-          //setResponse((prev) => prev + text);
-        }
-      });
+    await responseToSupabase(user, chatId, prompt);
   };
 
   return (

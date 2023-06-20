@@ -2,11 +2,13 @@
   "name": "ai-chat",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "documents": "utils/documents.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",

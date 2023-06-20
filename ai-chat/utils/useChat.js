@@ -1,45 +1,23 @@
 import { useEffect } from "react";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import {
-  addMessageJotai,
-  chatMessages,
-  clearChatMessages,
-  isChatNew,
-} from "@/jotai/chat";
+import { useAtom, useSetAtom } from "jotai";
+import { chatMessages, clearChatMessages, isChatNew } from "@/jotai/chat";
 
 const useChat = ({ chatId, initialMessages, user }) => {
-  // const isChatNew = useSelector((state) => state.messages.isChatNew);
-
-  const [messages, setMessages] = useAtom(chatMessages);
+  const setMessages = useSetAtom(chatMessages);
   const [newChat, setNewChat] = useAtom(isChatNew);
   const clearChatAtom = useSetAtom(clearChatMessages);
-  const addMessageAtom = useSetAtom(addMessageJotai);
 
   useEffect(() => {
-    //setMessages([]);
-    clearChatAtom();
-
     console.log("FIRST");
     if (newChat) {
       console.log("CHAT IS NEW");
 
-      setMessages([...initialMessages]);
-
-      const emptyAiMessage = [
-        {
-          profile: user?.id,
-          chat: chatId,
-          content: "",
-          role: "ai",
-        },
-      ];
-
-      addMessageAtom(emptyAiMessage);
-
       setNewChat(false);
     } else {
-      console.log("Chat is NOT NEW");
+      console.log("interface, clearing chatmessages");
+      clearChatAtom();
 
+      console.log("chat is NOT NEW, setting initialMessages");
       setMessages([...initialMessages]);
     }
   }, [chatId]);

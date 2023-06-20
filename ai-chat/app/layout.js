@@ -2,7 +2,6 @@ import "./globals.css";
 import SupabaseProvider from "../components/providers/supabase-provider";
 import SupabaseAuthProvider from "@/components/providers/supabase-auth-provider";
 import { createServerClient } from "@/utils/supabase-server";
-import { ReduxProvider } from "@/components/providers/redux-provider";
 import { JotaiProvider } from "@/components/providers/jotai-provider";
 
 export const metadata = {

@@ -1,13 +1,7 @@
-import useAI from "@/utils/useAI";
-import { createServerClient } from "@/utils/supabase-server";
-import { NextResponse } from "next/server";
-
-import streamResponse from "@/utils/test";
+import streamResponse from "@/utils/streamResponse";
 
 export async function POST(request) {
   const { prompt, chatId, user } = await request.json();
-
-  const supabase = createServerClient();
 
   // Checking for prompt
   if (!prompt) {
@@ -28,22 +22,4 @@ export async function POST(request) {
   const stream = streamResponse(prompt);
 
   return new Response(await stream);
-
-  // Get AI response
-  const response = await useAI(prompt);
-
-  const { data, error } = await supabase
-    .from("messages")
-    .insert({
-      profile: user?.id,
-      chat: chatId,
-      content:
-        response.response ||
-        "Was unable to find an answer to that... Please rephrase",
-      role: "ai",
-    })
-    .select("*")
-    .single();
-
-  return NextResponse.json({ data });
 }
