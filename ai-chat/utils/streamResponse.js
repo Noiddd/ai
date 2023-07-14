@@ -27,7 +27,7 @@ const streamResponse = async (prompt) => {
   const encoder = new TextEncoder();
 
   const model = new ChatOpenAI({
-    openAIApiKey: "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",
+    openAIApiKey: "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",
     temperature: 0.9,
     modelName: "gpt-3.5-turbo",
     streaming: true,
@@ -65,7 +65,7 @@ const streamResponse = async (prompt) => {
 
   const vectorStore = await SupabaseVectorStore.fromExistingIndex(
     new OpenAIEmbeddings({
-      openAIApiKey: "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",
+      openAIApiKey: "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",
     }),
     { client, tableName: "documents", queryName: "match_documents" }
   );
@@ -73,7 +73,7 @@ const streamResponse = async (prompt) => {
   let chaintest = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
 
   const res = chaintest.call({
-    query: `You are Taco, a helpful assistant and an expert in Singapore's Real Estate industry. ALWAYS answer in MARKDOWN. If you do not know the answer, reply with 'hmm... I'm sorry I do not know the answer to that'. Current date: ${new Date()}.${prompt}`,
+    query: `You are Taco, a helpful assistant and an expert in Singapore's Real Estate industry. ALWAYS answer in MARKDOWN. ALWAYS answer in detail and give examples from the document. If you do not know the answer, reply with 'hmm... I'm sorry I do not know the answer to that'. Current date: ${new Date()}.${prompt}`,
   });
 
   console.log({ res });
