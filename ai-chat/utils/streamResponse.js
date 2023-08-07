@@ -1,23 +1,16 @@
-import { BufferMemory } from "langchain/memory";
-import {
-  ConversationChain,
-  ConversationalRetrievalQAChain,
-  RetrievalQAChain,
-} from "langchain/chains";
+import { LLMChain, RetrievalQAChain } from "langchain/chains";
 
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import {
-  ChatPromptTemplate,
-  HumanMessagePromptTemplate,
-  MessagesPlaceholder,
-  SystemMessagePromptTemplate,
-} from "langchain/prompts";
+import { PromptTemplate } from "langchain/prompts";
 import { SupabaseVectorStore } from "langchain/vectorstores/supabase";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 
-import { createClient } from "@supabase/supabase-js";
+import { OpenAI } from "langchain/llms/openai";
+import { templates } from "./templates";
+import { ConversationLog } from "./conversationLog";
+import { getMatchesFromEmbeddings } from "./matches";
 
-const streamResponse = async (prompt) => {
+const streamResponse = async (prompt, chatId) => {
   // creating a streamable object
   const stream = new TransformStream();
 
@@ -50,38 +43,89 @@ const streamResponse = async (prompt) => {
     ],
   });
 
-  // vector query
-  const client = createClient(
-    "https://jacratlygjsoxtsvfmxw.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImphY3JhdGx5Z2pzb3h0c3ZmbXh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODE5MTEwNTUsImV4cCI6MTk5NzQ4NzA1NX0.-TnLhGZJ91rgGj2Mf9kpufhd2zdW7Fb5j2rxNVio_Qc"
-  );
-
-  const chatPrompt = ChatPromptTemplate.fromPromptMessages([
-    SystemMessagePromptTemplate.fromTemplate(
-      `Answer as concisely as possible and ALWAYS answer in MARKDOWN. Current date: ${new Date()}`
-    ),
-    HumanMessagePromptTemplate.fromTemplate("{input}"),
-  ]);
-
-  const vectorStore = await SupabaseVectorStore.fromExistingIndex(
-    new OpenAIEmbeddings({
-      openAIApiKey: "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",
-    }),
-    { client, tableName: "documents", queryName: "match_documents" }
-  );
-
-  let chaintest = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-
-  const res = chaintest.call({
-    query: `
-    Your name is Taco.
-    You are a helpful assistant and an expert in Singapore's Real Estate industry. 
-    ALWAYS answer in MARKDOWN. ALWAYS answer succinctly and in detail.
-    If you do not know the answer, reply with 'hmm... I'm sorry I do not know the answer to that'. Current date: ${new Date()}.${prompt}
-    `,
+  const llm = new OpenAI({
+    openAIApiKey: "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",
   });
 
-  console.log({ res });
+  const convoHistoryLimit = 10;
+
+  // Retrieve the conversation log and save the user's prompt
+  const conversationLog = new ConversationLog();
+  const conversationHistory = await conversationLog.getConversationHistory({
+    chatId: chatId,
+    limit: convoHistoryLimit,
+  });
+
+  console.log("---------------------conversationHistory------------------");
+  console.log(conversationHistory);
+  console.log("---------------------conversationHistory------------------");
+
+  const inquiryChain = new LLMChain({
+    llm,
+    prompt: new PromptTemplate({
+      template: templates.inquiryTemplate,
+      inputVariables: ["userPrompt", "conversationHistory"],
+    }),
+  });
+
+  // const inquiryChainResult = await inquiryChain.call({
+  //   userPrompt: prompt,
+  //   conversationHistory,
+  // });
+
+  // const inquiry = inquiryChainResult.text;
+  // console.log("-------------------inquiry--------------------");
+  // console.log(inquiry);
+  // console.log("-------------------inquiry--------------------");
+
+  console.log("-------------------prompt--------------------");
+  console.log(prompt);
+  console.log("-------------------prompt--------------------");
+
+  const matches = await getMatchesFromEmbeddings(prompt, 4);
+
+  const context = matches
+    .map(function (match) {
+      return match["pageContent"];
+    })
+    .reduce((combineContent, content) => {
+      return combineContent + " " + content;
+    });
+
+  const promptTemplate = new PromptTemplate({
+    template: templates.qaTemplate,
+    inputVariables: ["context", "question", "conversationHistory"],
+  });
+
+  console.log("---------------------context------------------");
+  console.log(context);
+  console.log("---------------------context------------------");
+
+  const chain = new LLMChain({
+    prompt: promptTemplate,
+    llm: model,
+  });
+
+  const res = chain.call({
+    context,
+    question: prompt,
+    conversationHistory,
+  });
+  //console.log({ res });
+  /* -------------------------------------------------------------------------------------------------- */
+
+  // const res = chaintest.call({
+  //   query: `
+  //   Context: You are Demsei AI.
+  //   You are a helpful assistant and an expert in Singapore's Real Estate industry.
+  //   ALWAYS answer in MARKDOWN. ALWAYS answer succinctly and in detail.
+  //   If you do not know the answer, reply with 'hmm... I'm sorry I do not know the answer to that'.
+  //   Current date: ${new Date()}.
+
+  //   Question:${prompt}`,
+  // });
+
+  //console.log({ res });
 
   return stream.readable;
 };

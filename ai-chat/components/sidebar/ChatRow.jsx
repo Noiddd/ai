@@ -7,7 +7,7 @@ import Chat from "./Chat";
 export default function ChatRow() {
   const { data, isLoading, deleteChatHandler } = useChats();
   return (
-    <div className="flex flex-col h-full mt-4 overflow-hidden">
+    <div className="flex flex-col h-full mt-4 mb-14 overflow-hidden">
       <div>
         {data && data?.length > 0 && (
           <h3 className="mt-4 text-sm font-medium sm:mt-6 text-neutral-400">

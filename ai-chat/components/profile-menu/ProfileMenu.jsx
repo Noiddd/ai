@@ -1,21 +1,49 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useAuth } from "../providers/supabase-auth-provider";
 import Avatar from "./Avatar";
-import ProfileMenuDropDown from "./ProfileMenuDropDown";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { VscSignOut } from "react-icons/vsc";
+import { IoSettingsOutline } from "react-icons/io5";
+import { BsPerson } from "react-icons/bs";
 
 export default function ProfileMenu() {
-  const [profileMenuDropDown, setProfileMenuDropDown] = useState(false);
   const { user, signOut } = useAuth();
+  console.log(user);
 
   return (
-    <div
-      onClick={() => setProfileMenuDropDown((prev) => !prev)}
-      className="cursor-pointer"
-    >
-      <Avatar avatar={user?.avatar_url} />
-      {profileMenuDropDown && <ProfileMenuDropDown signOut={signOut} />}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Avatar avatar={user?.avatar_url} />
+        <div>{user?.user}</div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="bg-black border-slate-500 rounded-lg overflow-hidden mb-5">
+        <DropdownMenuItem className="flex align-middle items-center gap-2 ">
+          <BsPerson />
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem className="flex align-middle items-center gap-2">
+          <IoSettingsOutline />
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-slate-500" />
+        <DropdownMenuItem
+          onClick={signOut}
+          className="flex align-middle items-center gap-2"
+        >
+          <VscSignOut />
+          Log Out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

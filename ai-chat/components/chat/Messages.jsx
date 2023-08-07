@@ -7,7 +7,6 @@ import Message from "./Message";
 
 export default function Messages({ chatRef }) {
   const messages = useAtomValue(chatMessages);
-  console.log(messages);
 
   useEffect(() => {
     chatRef.current?.scrollIntoView({

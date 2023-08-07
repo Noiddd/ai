@@ -19,7 +19,7 @@ export async function POST(request) {
     return;
   }
 
-  const stream = streamResponse(prompt);
+  const stream = streamResponse(prompt, chatId);
 
   return new Response(await stream);
 }
