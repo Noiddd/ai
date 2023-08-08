@@ -1,41 +1,9 @@
-// import { useRouter } from "next/navigation";
-// import { useEffect, useState } from "react";
-//import { useAuth } from "@/components/providers/supabase-auth-provider";
-
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import UserLoginForm from "@/components/ui/user-loginform";
 
 const LoginForm = () => {
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [error, setError] = useState(false);
-
-  // const { signUpWithEmail, signInWithEmail, signInWithGithub, user } =
-  //   useAuth();
-  // const router = useRouter();
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError(null);
-  //   try {
-  //     const error = await signInWithEmail(email, password);
-  //     if (error) {
-  //       setError(error);
-  //     }
-  //   } catch (error) {
-  //     console.log("Something went wrong!");
-  //   }
-  // };
-
-  // Check if there is a user
-  // useEffect(() => {
-  //   if (user) {
-  //     router.push("/chat");
-  //   }
-  // }, [user]);
-
   return (
     <>
       <div className="md:hidden">
@@ -46,20 +14,13 @@ const LoginForm = () => {
           alt="Authentication"
           className="block"
         />
-        {/* <img
-          src="ai-chat/app/background.avif"
-          width={1280}
-          height={843}
-          alt="Authentication"
-          className="hidden dark:block"
-        /> */}
       </div>
       <div className="container relative hidden h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href="/register"
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
+            "absolute right-4 top-4 md:right-8 md:top-8 rounded"
           )}
         >
           Sign Up
@@ -108,37 +69,6 @@ const LoginForm = () => {
         </div>
       </div>
     </>
-
-    // <form onSubmit={handleSubmit}>
-    //   {/* Inputs Container */}
-    //   <div className="mt-6 space-y-6">
-    //     <div className="space-y-2">
-    //       <label>Email</label>
-    //       <input
-    //         value={email}
-    //         onChange={(e) => setEmail(e.target.value)}
-    //         className="text-black"
-    //       />
-    //     </div>
-    //     <div className="space-y-2">
-    //       <label>Password</label>
-    //       <input
-    //         value={password}
-    //         onChange={(e) => setPassword(e.target.value)}
-    //         className="text-black"
-    //       />
-    //     </div>
-    //   </div>
-    //   {/* Error */}
-    //   {error && <div className="mt-4 text-red-500">{error}</div>}
-    //   <button
-    //     variant="subtle"
-    //     type="submit"
-    //     className="flex items-center w-full gap-2 mt-6"
-    //   >
-    //     Login with Email
-    //   </button>
-    // </form>
   );
 };
 

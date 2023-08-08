@@ -115,7 +115,7 @@ export default function ChatInput({ chatId }) {
       <div className="w-full max-w-5xl mx-auto">
         <form
           onSubmit={handleSubmit}
-          className="flex items-center w-full py-2 rounded-md shadow-sm focus-within:ring-neutral-500 focus-within:ring-1 bg-neutral-900"
+          className="flex items-center w-full py-2 rounded shadow-sm focus-within:ring-neutral-500 focus-within:ring-1 bg-neutral-900"
         >
           <input
             className="h-auto peer flex w-full resize-none rounded-md bg-transparent py-2 px-3 placeholder:text-sm placeholder:text-neutral-400 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 text-slate-50"

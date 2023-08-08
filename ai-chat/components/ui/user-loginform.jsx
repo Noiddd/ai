@@ -3,13 +3,17 @@
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../providers/supabase-auth-provider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineGoogle } from "react-icons/ai";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function UserLoginForm({ className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const { signUpWithEmail, signInWithEmail, signInWithGithub, user } =
     useAuth();
@@ -17,19 +21,28 @@ export default function UserLoginForm({ className, ...props }) {
 
   async function onSubmit(e) {
     e.preventDefault();
-    setError(null);
+    setIsLoading(true);
     try {
       const error = await signInWithEmail(email, password);
       if (error) {
         setError(error);
+        setIsLoading(false);
       }
     } catch (error) {
       console.log("Something went wrong!");
     }
   }
 
+  // Check if there is a user
+  useEffect(() => {
+    if (user) {
+      router.push("/chat");
+    }
+  }, [user]);
+
   return (
     <div className={cn("grid gap-6", className)} {...props}>
+      {error && <p className="text-sm text-red-500 m-0">{error}</p>}
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -37,6 +50,7 @@ export default function UserLoginForm({ className, ...props }) {
               Email
             </label>
             <Input
+              className="rounded"
               id="email"
               placeholder="Email"
               type="email"
@@ -44,8 +58,11 @@ export default function UserLoginForm({ className, ...props }) {
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Input
+              className="rounded"
               id="password"
               placeholder="Password"
               type="password"
@@ -53,12 +70,13 @@ export default function UserLoginForm({ className, ...props }) {
               autoComplete="password"
               autoCorrect="off"
               disabled={isLoading}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button variant="outline" disabled={isLoading}>
+          <Button variant="outline" disabled={isLoading} className="rounded">
             {isLoading && (
-              //<Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+              <div className="mr-3 inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
             )}
             Sign In with Email
           </Button>
@@ -74,9 +92,14 @@ export default function UserLoginForm({ className, ...props }) {
           <span className="w-full border-t" />
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        className="rounded"
+      >
         {isLoading ? (
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+          <div className="mr-3 inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
         ) : (
           <AiOutlineGoogle className="mr-2 h-4 w-4" />
         )}{" "}

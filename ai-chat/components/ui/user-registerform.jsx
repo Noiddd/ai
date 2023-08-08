@@ -37,6 +37,7 @@ export default function UserRegisterForm({ className, ...props }) {
               Email
             </label>
             <Input
+              className="rounded"
               id="email"
               placeholder="Email"
               type="email"
@@ -46,6 +47,7 @@ export default function UserRegisterForm({ className, ...props }) {
               disabled={isLoading}
             />
             <Input
+              className="rounded"
               id="password"
               placeholder="Password"
               type="password"
@@ -55,7 +57,7 @@ export default function UserRegisterForm({ className, ...props }) {
               disabled={isLoading}
             />
           </div>
-          <Button variant="outline" disabled={isLoading}>
+          <Button variant="outline" disabled={isLoading} className="rounded">
             {isLoading && (
               //<Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
@@ -74,7 +76,12 @@ export default function UserRegisterForm({ className, ...props }) {
           <span className="w-full border-t" />
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+        className="rounded"
+      >
         {isLoading ? (
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
         ) : (
