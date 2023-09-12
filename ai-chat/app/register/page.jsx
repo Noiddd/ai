@@ -37,7 +37,7 @@ const RegisterForm = () => {
   // }, [user]);
 
   return (
-    <>
+    <div className="bg-[#050414] h-full">
       <div className="md:hidden">
         <img
           src="ai-chat/app/background.avif"
@@ -110,7 +110,7 @@ const RegisterForm = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
 
     // <form onSubmit={handleSubmit}>
     //   {/* Inputs Container */}

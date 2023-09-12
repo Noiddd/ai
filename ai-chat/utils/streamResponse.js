@@ -82,7 +82,7 @@ const streamResponse = async (prompt, chatId) => {
   console.log(prompt);
   console.log("-------------------prompt--------------------");
 
-  const matches = await getMatchesFromEmbeddings(prompt, 4);
+  const matches = await getMatchesFromEmbeddings(prompt, 5);
 
   const context = matches
     .map(function (match) {
@@ -105,6 +105,11 @@ const streamResponse = async (prompt, chatId) => {
     prompt: promptTemplate,
     llm: model,
   });
+
+  // const contextSummary =
+  //   allDocs.length > 4000
+  //     ? await summarizeLongDocument({ document: allDocs, inquiry })
+  //     : allDocs;
 
   const res = chain.call({
     context,

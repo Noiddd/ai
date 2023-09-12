@@ -5,7 +5,7 @@ import UserLoginForm from "@/components/ui/user-loginform";
 
 const LoginForm = () => {
   return (
-    <>
+    <div className="h-full">
       <div className="md:hidden">
         <img
           src="ai-chat/app/background.avif"
@@ -15,7 +15,7 @@ const LoginForm = () => {
           className="block"
         />
       </div>
-      <div className="container relative hidden h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="bg-[#050414] container relative hidden h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
           href="/register"
           className={cn(
@@ -68,7 +68,7 @@ const LoginForm = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

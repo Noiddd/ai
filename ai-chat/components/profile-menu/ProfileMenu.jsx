@@ -26,7 +26,7 @@ export default function ProfileMenu() {
         <Avatar avatar={user?.avatar_url} />
         <div>{user?.user}</div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-black border-slate-500 rounded overflow-hidden mb-5">
+      <DropdownMenuContent className="bg-neutral-950 border-slate-500 rounded overflow-hidden mb-5">
         <DropdownMenuItem className="flex align-middle items-center gap-2 ">
           <BsPerson />
           Profile

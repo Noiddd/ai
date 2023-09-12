@@ -17,8 +17,8 @@ export default async function RootLayout({ children }) {
   } = await supabase.auth.getSession();
 
   return (
-    <html lang="en" className="h-full scroll-smooth">
-      <body className="h-full bg-neutral-950 text-neutral-50;">
+    <html lang="en">
+      <body>
         <SupabaseProvider>
           <SupabaseAuthProvider serverSession={session}>
             {children}

@@ -7,9 +7,15 @@ import { FiSend } from "react-icons/fi";
 import { useAuth } from "../providers/supabase-auth-provider";
 import { useRouter } from "next/navigation";
 
+import { ToastAction } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
+
+import { Toaster } from "@/components/ui/toaster";
+
 import {
   addMessageJotai,
   addSupabaseResponse,
+  chatStreaming,
   clearChatMessages,
   clearResponse,
   isChatNew,
@@ -30,6 +36,9 @@ export default function ChatInput({ chatId }) {
   const addMessageAtom = useSetAtom(addMessageJotai);
   const clearResponseAtom = useSetAtom(clearResponse);
   const responseToSupabase = useSetAtom(addSupabaseResponse);
+  const isChatStreaming = useSetAtom(chatStreaming);
+
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +61,7 @@ export default function ChatInput({ chatId }) {
       // start new chat since input in default chat screen
       const newChatData = await addChatHandler();
 
-      // creating user message to push into redux
+      // creating user message to push into jotai
       const firstUserMessage = [
         {
           profile: user?.id,
@@ -83,7 +92,7 @@ export default function ChatInput({ chatId }) {
       // Redirect to the new chat
       router.push(`/chat/${chatId}`);
 
-      //creating user message to push into redux
+      //creating user message to push into jotai
       const firstUserMessage = [
         {
           profile: user?.id,
@@ -107,11 +116,16 @@ export default function ChatInput({ chatId }) {
       clearResponseAtom();
     }
 
+    toast({
+      title: "Click here to stop generating",
+      action: <ToastAction altText="Try again">Stop</ToastAction>,
+    });
     await responseToSupabase(user, chatId, prompt);
   };
 
   return (
-    <div className="sticky bottom-0 left-0 right-0 px-4 py-10 sm:px-8 bg-gradient-to-b from-transparent via-neutral-950/60 to-neutral-950/90">
+    <div className="flex flex-col	sticky bottom-0 left-0 right-0 px-4 py-10 sm:px-8 bg-gradient-to-b from-transparent via-neutral-950/60 to-neutral-950/90">
+      <Toaster />
       <div className="w-full max-w-5xl mx-auto">
         <form
           onSubmit={handleSubmit}

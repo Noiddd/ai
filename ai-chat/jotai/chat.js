@@ -8,6 +8,9 @@ export const clearResponse = atom(null, (get, set) => {
 
 export const chatMessages = atom([]);
 
+// is chat still generating answer
+export const chatStreaming = atom(false);
+
 export const isChatNew = atom(false);
 
 export const clearChatMessages = atom(null, (get, set) => {

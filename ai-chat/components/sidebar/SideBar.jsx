@@ -4,7 +4,7 @@ import React from "react";
 import ChatRow from "./ChatRow";
 import ProfileMenu from "../profile-menu/ProfileMenu";
 import NewChat from "./NewChat";
-import Logo from "./Logo";
+import Logo from "../common/Logo";
 
 export default function SideBar() {
   return (

@@ -10,9 +10,9 @@
     "documents": "utils/documents.js"
   },
   "dependencies": {
-    "@pinecone-database/pinecone": "^0.1.6",
     "@radix-ui/react-dropdown-menu": "^2.0.5",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-toast": "^1.1.4",
     "@reduxjs/toolkit": "^1.9.5",
     "@supabase/auth-helpers-nextjs": "^0.6.1",
     "@supabase/supabase-js": "^2.31.0",
