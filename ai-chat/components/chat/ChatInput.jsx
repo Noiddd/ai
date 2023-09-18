@@ -21,6 +21,7 @@ import {
   isChatNew,
 } from "@/jotai/chat";
 import { useSetAtom } from "jotai";
+import StopGenButton from "./StopGenButton";
 
 export default function ChatInput({ chatId }) {
   const [inputValue, setInputValue] = useState("");
@@ -125,8 +126,9 @@ export default function ChatInput({ chatId }) {
 
   return (
     <div className="flex flex-col	sticky bottom-0 left-0 right-0 px-4 py-10 sm:px-8 bg-gradient-to-b from-transparent via-neutral-950/60 to-neutral-950/90">
-      <Toaster />
       <div className="w-full max-w-5xl mx-auto">
+        <StopGenButton />
+
         <form
           onSubmit={handleSubmit}
           className="flex items-center w-full py-2 rounded shadow-sm focus-within:ring-neutral-500 focus-within:ring-1 bg-neutral-900"

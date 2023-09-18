@@ -21,7 +21,7 @@ const streamResponse = async (prompt, chatId) => {
 
   const model = new ChatOpenAI({
     openAIApiKey: "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",
-    temperature: 0.9,
+    temperature: 0.5,
     modelName: "gpt-3.5-turbo",
     streaming: true,
     callbacks: [
@@ -47,7 +47,7 @@ const streamResponse = async (prompt, chatId) => {
     openAIApiKey: "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",
   });
 
-  const convoHistoryLimit = 10;
+  const convoHistoryLimit = 5;
 
   // Retrieve the conversation log and save the user's prompt
   const conversationLog = new ConversationLog();
