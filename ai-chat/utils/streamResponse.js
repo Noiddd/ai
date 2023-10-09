@@ -60,13 +60,13 @@ const streamResponse = async (prompt, chatId) => {
   console.log(conversationHistory);
   console.log("---------------------conversationHistory------------------");
 
-  const inquiryChain = new LLMChain({
-    llm,
-    prompt: new PromptTemplate({
-      template: templates.inquiryTemplate,
-      inputVariables: ["userPrompt", "conversationHistory"],
-    }),
-  });
+  // const inquiryChain = new LLMChain({
+  //   llm,
+  //   prompt: new PromptTemplate({
+  //     template: templates.inquiryTemplate,
+  //     inputVariables: ["userPrompt", "conversationHistory"],
+  //   }),
+  // });
 
   // const inquiryChainResult = await inquiryChain.call({
   //   userPrompt: prompt,
@@ -116,7 +116,7 @@ const streamResponse = async (prompt, chatId) => {
     question: prompt,
     conversationHistory,
   });
-  //console.log({ res });
+  // console.log({ res });
   /* -------------------------------------------------------------------------------------------------- */
 
   // const res = chaintest.call({

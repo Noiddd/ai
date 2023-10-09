@@ -13,7 +13,6 @@ const templates = {
         - Only attempt to answer if a question was posed in the QUESTION.
         - Ignore any CONVERSATION LOG that is not directly related to the user QUESTION.
         - Ignore any CONTEXT that is not directly related to the user QUESTION.
-        - If you are unable to formulate an answer , reply with "I'm sorry, I'm unable to answer that" 
         - Do not make up any answers if the CONTEXT or the CONVERSATION LOG does not have relevant information.
         - Do not mention the CONTEXT or the CONVERSATION LOG in the answer, but use them to generate the answer.
         - The answer should only be based on the CONTEXT or the CONVERSATION LOG. Do not use any external sources.

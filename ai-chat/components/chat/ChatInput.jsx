@@ -7,11 +7,6 @@ import { FiSend } from "react-icons/fi";
 import { useAuth } from "../providers/supabase-auth-provider";
 import { useRouter } from "next/navigation";
 
-import { ToastAction } from "@/components/ui/toast";
-import { useToast } from "@/components/ui/use-toast";
-
-import { Toaster } from "@/components/ui/toaster";
-
 import {
   addMessageJotai,
   addSupabaseResponse,
@@ -20,7 +15,7 @@ import {
   clearResponse,
   isChatNew,
 } from "@/jotai/chat";
-import { useSetAtom } from "jotai";
+import { useSetAtom, useAtom } from "jotai";
 import StopGenButton from "./StopGenButton";
 
 export default function ChatInput({ chatId }) {
@@ -37,9 +32,7 @@ export default function ChatInput({ chatId }) {
   const addMessageAtom = useSetAtom(addMessageJotai);
   const clearResponseAtom = useSetAtom(clearResponse);
   const responseToSupabase = useSetAtom(addSupabaseResponse);
-  const isChatStreaming = useSetAtom(chatStreaming);
-
-  const { toast } = useToast();
+  const [isChatStreaming, setIsChatStreaming] = useAtom(chatStreaming);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -117,18 +110,15 @@ export default function ChatInput({ chatId }) {
       clearResponseAtom();
     }
 
-    toast({
-      title: "Click here to stop generating",
-      action: <ToastAction altText="Try again">Stop</ToastAction>,
-    });
+    // Stop generating button should appear
+    setIsChatStreaming(true);
     await responseToSupabase(user, chatId, prompt);
   };
 
   return (
     <div className="flex flex-col	sticky bottom-0 left-0 right-0 px-4 py-10 sm:px-8 bg-gradient-to-b from-transparent via-neutral-950/60 to-neutral-950/90">
       <div className="w-full max-w-5xl mx-auto">
-        <StopGenButton />
-
+        {isChatStreaming && <StopGenButton />}
         <form
           onSubmit={handleSubmit}
           className="flex items-center w-full py-2 rounded shadow-sm focus-within:ring-neutral-500 focus-within:ring-1 bg-neutral-900"

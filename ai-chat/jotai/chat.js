@@ -11,6 +11,16 @@ export const chatMessages = atom([]);
 // is chat still generating answer
 export const chatStreaming = atom(false);
 
+// stop generating and set chatStreaming to false
+const abortControllerAtom = atom(new AbortController());
+
+export const cancelHandle = atom(null, (get, set) => {
+  const abortController = get(abortControllerAtom);
+  abortController.abort();
+  set(chatStreaming, false);
+  set(abortControllerAtom, new AbortController());
+});
+
 export const isChatNew = atom(false);
 
 export const clearChatMessages = atom(null, (get, set) => {
@@ -35,6 +45,7 @@ export const addSupabaseResponse = atom(
           chatId,
           user,
         }),
+        signal: get(abortControllerAtom).signal,
       });
 
       if (!res.ok) {
@@ -57,6 +68,9 @@ export const addSupabaseResponse = atom(
         if (done) {
           console.log("this is the last response");
           console.log(get(aiResponse));
+
+          // done with streaming
+          set(chatStreaming, false);
 
           try {
             const res = await fetch("/api/supabase", {
@@ -95,7 +109,11 @@ export const addSupabaseResponse = atom(
         set(chatMessages, [...atomWithoutLastMessage, ...aiMessage]);
       }
     } catch (error) {
+      console.log("inside error block");
       console.log(error);
+    } finally {
+      console.log("inside finally block");
+      console.log(get(aiResponse));
     }
   }
 );

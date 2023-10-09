@@ -18,7 +18,6 @@ import { BsPerson } from "react-icons/bs";
 
 export default function ProfileMenu() {
   const { user, signOut } = useAuth();
-  console.log(user);
 
   return (
     <DropdownMenu>
