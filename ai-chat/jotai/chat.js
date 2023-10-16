@@ -1,5 +1,10 @@
 import { atom } from "jotai";
 
+// export const currentUserData = atom({
+//   userId: "",
+//   chatId: "",
+// });
+
 export const aiResponse = atom("");
 
 export const clearResponse = atom(null, (get, set) => {
@@ -66,28 +71,7 @@ export const addSupabaseResponse = atom(
         const { value, done } = await reader.read();
 
         if (done) {
-          console.log("this is the last response");
-          console.log(get(aiResponse));
-
-          // done with streaming
-          set(chatStreaming, false);
-
-          try {
-            const res = await fetch("/api/supabase", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                message: get(aiResponse),
-                chatId,
-                user,
-              }),
-            });
-          } catch (error) {
-            console.log(error);
-          }
-
+          // Route to finally block for normal chat and stop generating
           break;
         }
 
@@ -114,6 +98,25 @@ export const addSupabaseResponse = atom(
     } finally {
       console.log("inside finally block");
       console.log(get(aiResponse));
+
+      // done with streaming
+      set(chatStreaming, false);
+
+      try {
+        const res = await fetch("/api/supabase", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: get(aiResponse),
+            chatId,
+            user,
+          }),
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 );

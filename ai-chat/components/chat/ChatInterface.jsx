@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import ChatInput from "./ChatInput";
 import StartNewChat from "./StartNewChat";
 import Messages from "./Messages";
