@@ -84,10 +84,10 @@ export default function ChatInput({ chatId }) {
       console.log("Chat input chat got id");
 
       // Redirect to the new chat
-      router.push(`/chat/${chatId}`);
+      // router.push(`/chat/${chatId}`);
 
       //creating user message to push into jotai
-      const firstUserMessage = [
+      const userMessage = [
         {
           profile: user?.id,
           chat: chatId,
@@ -103,9 +103,10 @@ export default function ChatInput({ chatId }) {
       ];
 
       console.log("chatInput, chat got id, adding user input into jotai");
-      addMessageAtom(firstUserMessage);
+      addMessageAtom(userMessage);
+      console.log(userMessage);
 
-      //Adding user input into supabase
+      // Adding user input into supabase
       addMessage(chatId, prompt, "user");
       clearResponseAtom();
     }
