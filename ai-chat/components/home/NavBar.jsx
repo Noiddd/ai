@@ -11,7 +11,7 @@ const NavBar = () => {
         <Logo />
         <div className="flex gap-5 items-center justify-between">
           <SignInButton />
-          <GetStartedButton />
+          {/* <GetStartedButton /> */}
         </div>
       </div>
     </>
