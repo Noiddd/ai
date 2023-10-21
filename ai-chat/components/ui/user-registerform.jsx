@@ -19,7 +19,7 @@ export default function UserRegisterForm({ className, ...props }) {
     e.preventDefault();
     setError(null);
     try {
-      const error = await signInWithEmail(email, password);
+      const error = await signUpWithEmail(email, password);
       if (error) {
         setError(error);
       }
@@ -66,7 +66,7 @@ export default function UserRegisterForm({ className, ...props }) {
           </Button>
         </div>
       </form>
-      <div className="relative">
+      {/* <div className="relative">
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground z-10">
             Or continue with
@@ -88,7 +88,7 @@ export default function UserRegisterForm({ className, ...props }) {
           <AiOutlineGoogle className="mr-2 h-4 w-4" />
         )}{" "}
         Google
-      </Button>
+      </Button> */}
     </div>
   );
 }
