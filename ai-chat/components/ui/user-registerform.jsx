@@ -10,6 +10,9 @@ import { Input } from "@/components/ui/input";
 
 export default function UserRegisterForm({ className, ...props }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const { signUpWithEmail, signInWithEmail, signInWithGithub, user } =
     useAuth();
@@ -45,6 +48,8 @@ export default function UserRegisterForm({ className, ...props }) {
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               className="rounded"
@@ -55,6 +60,8 @@ export default function UserRegisterForm({ className, ...props }) {
               autoComplete="password"
               autoCorrect="off"
               disabled={isLoading}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <Button variant="outline" disabled={isLoading} className="rounded">
