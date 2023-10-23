@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div className="relative flex w-full h-full overflow-hidden bg-[#050414]">
       <div className="relative flex flex-col items-stretch flex-1 w-full h-full overflow-hidden bg-[#050414]">
-        <NavBar />
+        {/* <NavBar /> */}
         <HeroSection />
       </div>
     </div>
