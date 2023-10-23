@@ -157,10 +157,10 @@ export default function Example() {
               You can login with my test account
             </p>
             <p className="mt-6 text-lg leading-8 text-gray-600">
-              username: demseiaitest@gmail.com
+              Username: demseiaitest@gmail.com
             </p>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
-              password: demseiai
+            <p className="text-lg leading-8 text-gray-600">
+              Password: demseiai
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
